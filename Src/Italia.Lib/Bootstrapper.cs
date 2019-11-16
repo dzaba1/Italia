@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Italia.Lib.Dal;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Italia.Lib
 {
@@ -9,7 +7,9 @@ namespace Italia.Lib
     {
         public static void RegisterItalia(this IServiceCollection container)
         {
-
+            container.AddTransient<IItaliaEngine, ItaliaEngine>();
+            container.AddTransient<IOffersDal, OffersDal>();
+            container.AddTransient<ISettings, Settings>();
         }
     }
 }

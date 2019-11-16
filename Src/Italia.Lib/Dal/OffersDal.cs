@@ -1,4 +1,5 @@
-﻿using Italia.Lib.Model;
+﻿using Dzaba.Utils;
+using Italia.Lib.Model;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +17,8 @@ namespace Italia.Lib.Dal
 
         public OffersDal(DatabaseContext dbContext)
         {
+            Require.NotNull(dbContext, nameof(dbContext));
+
             this.dbContext = dbContext;
         }
 
