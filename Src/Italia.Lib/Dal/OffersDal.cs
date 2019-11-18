@@ -9,6 +9,7 @@ namespace Italia.Lib.Dal
     public interface IOffersDal
     {
         Task<Offer[]> GetAllActiveAsync();
+        Task<Offer[]> GetAllAsync();
     }
 
     internal sealed class OffersDal : IOffersDal
@@ -26,6 +27,12 @@ namespace Italia.Lib.Dal
         {
             return await dbContext.Offers
                 .Where(o => o.Active)
+                .ToArrayAsync();
+        }
+
+        public async Task<Offer[]> GetAllAsync()
+        {
+            return await dbContext.Offers
                 .ToArrayAsync();
         }
     }

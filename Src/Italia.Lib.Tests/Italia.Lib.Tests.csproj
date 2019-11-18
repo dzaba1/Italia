@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoFixture.AutoMoq" Version="4.11.0" />
     <PackageReference Include="FluentAssertions" Version="5.9.0" />
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="NUnit" Version="3.12.0" />
@@ -12,6 +13,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Italia.Lib\Italia.Lib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Dzaba.TestUtils">
+      <HintPath>..\..\3rdParty\Dzaba.TestUtils.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

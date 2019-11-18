@@ -11,7 +11,8 @@ namespace Italia.Lib.Model
         public int Id { get; set; }
 
         [MaxLength(256)]
-        public string ExternalKey { get; set; }
+        [Required]
+        public string ExternalReference { get; set; }
 
         public DateTime Created { get; set; }
 
@@ -46,5 +47,10 @@ namespace Italia.Lib.Model
         [MaxLength(32)]
         [Required]
         public string DataProvider { get; set; }
+
+        public ReferenceKey GetReferenceKey()
+        {
+            return new ReferenceKey(DataProvider, ExternalReference);
+        }
     }
 }
