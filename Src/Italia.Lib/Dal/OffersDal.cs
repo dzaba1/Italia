@@ -1,15 +1,15 @@
 ﻿using Dzaba.Utils;
 using Italia.Lib.Model;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Italia.Lib.Dal
 {
     public interface IOffersDal
     {
-        Task<Offer[]> GetAllActiveAsync();
         Task<Offer[]> GetAllAsync();
+        Task UpdateAsync(Offer value);
+        Task<int> AddAsync(Offer value);
     }
 
     internal sealed class OffersDal : IOffersDal
@@ -23,17 +23,27 @@ namespace Italia.Lib.Dal
             this.dbContext = dbContext;
         }
 
-        public async Task<Offer[]> GetAllActiveAsync()
+        public async Task<int> AddAsync(Offer value)
         {
-            return await dbContext.Offers
-                .Where(o => o.Active)
-                .ToArrayAsync();
+            Require.NotNull(value, nameof(value));
+
+            dbContext.Offers.Add(value);
+            await dbContext.SaveChangesAsync();
+            return value.Id;
         }
 
         public async Task<Offer[]> GetAllAsync()
         {
             return await dbContext.Offers
                 .ToArrayAsync();
+        }
+
+        public async Task UpdateAsync(Offer value)
+        {
+            Require.NotNull(value, nameof(value));
+
+            dbContext.Offers.Update(value);
+            await dbContext.SaveChangesAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Italia.Lib.Dal;
+using Italia.Lib.Notifications;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Italia.Lib
@@ -10,6 +11,7 @@ namespace Italia.Lib
             container.AddTransient<IItaliaEngine, ItaliaEngine>();
             container.AddTransient<IOffersDal, OffersDal>();
             container.AddTransient<ISettings, Settings>();
+            container.AddTransient<IDataProviderComposite, DataProviderComposite>();
         }
     }
 }

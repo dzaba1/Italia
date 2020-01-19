@@ -8,6 +8,7 @@ namespace Italia.Lib.Model
     public sealed class Offer
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [MaxLength(256)]
