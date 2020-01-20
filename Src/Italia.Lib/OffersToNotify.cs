@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Dzaba.Utils;
 using Italia.Lib.Model;
 
@@ -62,5 +63,8 @@ namespace Italia.Lib
 
             goneOffers.Add(offer);
         }
+
+        public bool Empty => !newOffers.Any() && !activeAgainOffers.Any() && !changedOffers.Any() &&
+                    !goneOffers.Any();
     }
 }

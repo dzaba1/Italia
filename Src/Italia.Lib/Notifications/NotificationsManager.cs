@@ -30,6 +30,12 @@ namespace Italia.Lib.Notifications
         {
             Require.NotNull(offers, nameof(offers));
 
+            if (offers.Empty)
+            {
+                logger.LogInformation("Empty offers. Canceling notifications.");
+                return;
+            }
+
             foreach (var notification in notifications)
             {
                 logger.LogInformation($"Calling notification {notification.GetType()}");

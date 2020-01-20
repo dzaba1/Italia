@@ -1,6 +1,7 @@
 ﻿using Dzaba.Utils;
 using Italia.Lib.Dal;
 using Italia.Lib.Notifications;
+using Italia.Lib.Notifications.Email;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Italia.Lib
@@ -14,6 +15,8 @@ namespace Italia.Lib
             container.AddTransient<IItaliaEngine, ItaliaEngine>();
             container.AddTransient<IOffersDal, OffersDal>();
             container.AddTransient<INotificationsManager, NotificationsManager>();
+            container.AddTransient<INotification, EmailNotification>();
+            container.AddTransient<IEmailBodyBuilder, EmailBodyBuilder>();
         }
     }
 }

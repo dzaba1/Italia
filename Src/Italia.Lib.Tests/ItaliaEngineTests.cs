@@ -80,9 +80,7 @@ namespace Italia.Lib.Tests
             dal.Verify(x => x.UpdateAsync(It.IsAny<Offer>()), Times.Never);
 
             notifications.Verify(
-                x => x.NotifyAsync(It.Is<OffersToNotify>(o =>
-                    !o.NewOffers.Any() && !o.ActiveAgainOffers.Any() && !o.ChangedOffers.Any() &&
-                    !o.GoneOffers.Any())), Times.Once());
+                x => x.NotifyAsync(It.Is<OffersToNotify>(o => o.Empty)), Times.Once());
         }
 
         [Test]
