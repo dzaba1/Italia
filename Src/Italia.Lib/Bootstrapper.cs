@@ -13,7 +13,6 @@ namespace Italia.Lib
 
             container.AddTransient<IItaliaEngine, ItaliaEngine>();
             container.AddTransient<IOffersDal, OffersDal>();
-            container.AddTransient<ISettings, Settings>();
             container.AddTransient<INotificationsManager, NotificationsManager>();
         }
     }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Italia.Lib.Notifications;
+using Microsoft.Extensions.Logging;
 
 namespace Italia.Lib
 {
@@ -19,18 +20,22 @@ namespace Italia.Lib
         private readonly IOffersDal offersDal;
         private readonly INotificationsManager notificationsManager;
         private readonly IDataProvider[] dataProviders;
+        private readonly ILogger<ItaliaEngine> logger;
 
         public ItaliaEngine(IEnumerable<IDataProvider> dataProviders,
             IOffersDal offersDal,
-            INotificationsManager notificationsManager)
+            INotificationsManager notificationsManager,
+            ILogger<ItaliaEngine> logger)
         {
             Require.NotNull(dataProviders, nameof(dataProviders));
             Require.NotNull(offersDal, nameof(offersDal));
             Require.NotNull(notificationsManager, nameof(notificationsManager));
+            Require.NotNull(logger, nameof(logger));
 
             this.dataProviders = dataProviders.ToArray();
             this.offersDal = offersDal;
             this.notificationsManager = notificationsManager;
+            this.logger = logger;
         }
 
         public async Task RunAsync()
@@ -78,6 +83,8 @@ namespace Italia.Lib
             var offers = new Dictionary<ReferenceKey, Offer>();
             var tasks = new List<Task<Offer[]>>(dataProviders.Length);
 
+            logger.LogInformation("Getting all data from providers.");
+
             foreach (var dataProvider in dataProviders)
             {
                 var task = dataProvider.GetOffersAsync();
@@ -98,6 +105,8 @@ namespace Italia.Lib
 
         private async Task OfferIsGoneAsync(Offer offer, OffersToNotify offersToNotify)
         {
+            logger.LogInformation($"Offer with ID {offer.Id} is not active.");
+
             offer.Active = false;
             offer.Modified = DateTime.Now;
 
@@ -129,6 +138,8 @@ namespace Italia.Lib
 
         private async Task OfferActiveAgain(OffersToNotify offersToNotify, Offer offer, Offer savedOffer)
         {
+            logger.LogInformation($"Offer with ID {offer.Id} active again.");
+
             SetProperties(offer, savedOffer);
             offer.Active = true;
 
@@ -138,6 +149,8 @@ namespace Italia.Lib
 
         private async Task OfferChangedAsync(Offer offer, Offer savedOffer, OffersToNotify offersToNotify)
         {
+            logger.LogInformation($"Offer with ID {offer.Id} changed.");
+
             SetProperties(offer, savedOffer);
 
             await offersDal.UpdateAsync(offer);
@@ -146,6 +159,8 @@ namespace Italia.Lib
 
         private async Task NewOfferAsync(Offer offer, OffersToNotify offersToNotify)
         {
+            logger.LogInformation($"New offer from '{offer.DataProvider}' - {offer.ExternalReference}");
+
             offer.Active = true;
 
             var now = DateTime.Now;
