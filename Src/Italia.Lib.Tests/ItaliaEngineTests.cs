@@ -32,7 +32,7 @@ namespace Italia.Lib.Tests
             var provider = fixture.FreezeMock<IDataProvider>();
             provider.Setup(x => x.GetOffersAsync())
                 .ReturnsAsync(offers);
-            fixture.Inject<IEnumerable<IDataProvider>>(new[] { provider.Object });
+            fixture.Inject<IEnumerable<IDataProvider>>(new[] {provider.Object});
         }
 
         [Test]
@@ -51,6 +51,10 @@ namespace Italia.Lib.Tests
             await sut.RunAsync();
 
             dal.Verify(x => x.AddAsync(It.IsNotNull<Offer>()), Times.Exactly(3));
+            notifications.Verify(
+                x => x.NotifyAsync(It.Is<OffersToNotify>(o =>
+                    o.NewOffers.Count() == 3 && !o.ActiveAgainOffers.Any() && !o.ChangedOffers.Any() &&
+                    !o.GoneOffers.Any())), Times.Once());
         }
     }
 }
