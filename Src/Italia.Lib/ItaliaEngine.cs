@@ -87,6 +87,7 @@ namespace Italia.Lib
 
             foreach (var dataProvider in dataProviders)
             {
+                logger.LogInformation($"Calling data provider {dataProvider.GetType()}");
                 var task = dataProvider.GetOffersAsync();
                 tasks.Add(task);
             }
