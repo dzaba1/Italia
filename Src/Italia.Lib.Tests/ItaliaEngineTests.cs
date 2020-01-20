@@ -50,11 +50,65 @@ namespace Italia.Lib.Tests
 
             await sut.RunAsync();
 
-            dal.Verify(x => x.AddAsync(It.IsNotNull<Offer>()), Times.Exactly(3));
+            dal.Verify(x => x.AddAsync(It.Is<Offer>(o => o.Active)), Times.Exactly(3));
+            dal.Verify(x => x.UpdateAsync(It.IsAny<Offer>()), Times.Never);
+
             notifications.Verify(
                 x => x.NotifyAsync(It.Is<OffersToNotify>(o =>
                     o.NewOffers.Count() == 3 && !o.ActiveAgainOffers.Any() && !o.ChangedOffers.Any() &&
                     !o.GoneOffers.Any())), Times.Once());
+        }
+
+        [Test]
+        public async Task RunAsync_WhenRecordsExist_ThenNothingHappens()
+        {
+            var offers = TestData.PollSomeOffers().ToArray();
+
+            var dal = fixture.FreezeMock<IOffersDal>();
+            dal.Setup(x => x.GetAllAsync())
+                .ReturnsAsync(offers);
+
+            MockPoll(offers);
+
+            var notifications = fixture.FreezeMock<INotificationsManager>();
+
+            var sut = CreateSut();
+
+            await sut.RunAsync();
+
+            dal.Verify(x => x.AddAsync(It.IsAny<Offer>()), Times.Never);
+            dal.Verify(x => x.UpdateAsync(It.IsAny<Offer>()), Times.Never);
+
+            notifications.Verify(
+                x => x.NotifyAsync(It.Is<OffersToNotify>(o =>
+                    !o.NewOffers.Any() && !o.ActiveAgainOffers.Any() && !o.ChangedOffers.Any() &&
+                    !o.GoneOffers.Any())), Times.Once());
+        }
+
+        [Test]
+        public async Task RunAsync_WhenExistingRecordsAreNotPolled_ThenTheyAreNotActive()
+        {
+            var offers = TestData.PollSomeOffers().ToArray();
+
+            var dal = fixture.FreezeMock<IOffersDal>();
+            dal.Setup(x => x.GetAllAsync())
+                .ReturnsAsync(offers);
+
+            MockPoll();
+
+            var notifications = fixture.FreezeMock<INotificationsManager>();
+
+            var sut = CreateSut();
+
+            await sut.RunAsync();
+
+            dal.Verify(x => x.AddAsync(It.IsAny<Offer>()), Times.Never);
+            dal.Verify(x => x.UpdateAsync(It.Is<Offer>(o => !o.Active)), Times.Exactly(3));
+
+            notifications.Verify(
+                x => x.NotifyAsync(It.Is<OffersToNotify>(o =>
+                    !o.NewOffers.Any() && !o.ActiveAgainOffers.Any() && !o.ChangedOffers.Any() &&
+                    o.GoneOffers.Count() == 3)), Times.Once());
         }
     }
 }
