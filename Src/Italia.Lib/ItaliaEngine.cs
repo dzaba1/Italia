@@ -133,7 +133,7 @@ namespace Italia.Lib
             offer.Active = true;
 
             await offersDal.UpdateAsync(offer);
-            offersToNotify.AddOfferActiveAgain(offer);
+            offersToNotify.AddOfferActiveAgain(savedOffer, offer);
         }
 
         private async Task OfferChangedAsync(Offer offer, Offer savedOffer, OffersToNotify offersToNotify)

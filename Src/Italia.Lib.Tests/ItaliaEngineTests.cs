@@ -110,5 +110,35 @@ namespace Italia.Lib.Tests
                     !o.NewOffers.Any() && !o.ActiveAgainOffers.Any() && !o.ChangedOffers.Any() &&
                     o.GoneOffers.Count() == 3)), Times.Once());
         }
+
+        [Test]
+        public async Task RunAsync_WhenRecordsChanged_ThenCorrectNotificationIsShown()
+        {
+            var dal = fixture.FreezeMock<IOffersDal>();
+            dal.Setup(x => x.GetAllAsync())
+                .ReturnsAsync(TestData.PollSomeOffers().ToArray());
+
+            MockPoll(TestData.PollSomeOffers()
+                .Select(o =>
+                {
+                    o.Price += 100;
+                    return o;
+                })
+                .ToArray());
+
+            var notifications = fixture.FreezeMock<INotificationsManager>();
+
+            var sut = CreateSut();
+
+            await sut.RunAsync();
+
+            dal.Verify(x => x.AddAsync(It.IsAny<Offer>()), Times.Never);
+            dal.Verify(x => x.UpdateAsync(It.Is<Offer>(o => o.Active)), Times.Exactly(3));
+
+            notifications.Verify(
+                x => x.NotifyAsync(It.Is<OffersToNotify>(o =>
+                    !o.NewOffers.Any() && !o.ActiveAgainOffers.Any() && o.ChangedOffers.Count() == 3 &&
+                    !o.GoneOffers.Any())), Times.Once());
+        }
     }
 }

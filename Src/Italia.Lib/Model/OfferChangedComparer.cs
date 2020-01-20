@@ -18,13 +18,13 @@ namespace Italia.Lib.Model
                 return false;
             }
 
-            return x.Active == y.Active ||
-                x.Country == y.Country ||
-                x.Departure == y.Departure ||
-                x.From == y.From ||
-                x.HotelName == y.HotelName ||
-                x.OriginalPrice == y.OriginalPrice ||
-                x.Price == y.Price ||
+            return x.Active == y.Active &&
+                x.Country == y.Country &&
+                x.Departure == y.Departure &&
+                x.From == y.From &&
+                x.HotelName == y.HotelName &&
+                x.OriginalPrice == y.OriginalPrice &&
+                x.Price == y.Price &&
                 x.To == y.To;
         }
 

@@ -22,12 +22,12 @@ namespace Italia.Lib
     public sealed class OffersToNotify
     {
         private readonly List<Offer> newOffers = new List<Offer>();
-        private readonly List<Offer> activeAgainOffers = new List<Offer>();
+        private readonly List<OffersPair> activeAgainOffers = new List<OffersPair>();
         private readonly List<Offer> goneOffers = new List<Offer>();
         private readonly List<OffersPair> changedOffers = new List<OffersPair>();
 
         public IEnumerable<Offer> NewOffers => newOffers;
-        public IEnumerable<Offer> ActiveAgainOffers => activeAgainOffers;
+        public IEnumerable<OffersPair> ActiveAgainOffers => activeAgainOffers;
         public IEnumerable<Offer> GoneOffers => goneOffers;
         public IEnumerable<OffersPair> ChangedOffers => changedOffers;
 
@@ -47,11 +47,13 @@ namespace Italia.Lib
             changedOffers.Add(pair);
         }
 
-        public void AddOfferActiveAgain(Offer offer)
+        public void AddOfferActiveAgain(Offer oldOffer, Offer newOffer)
         {
-            Require.NotNull(offer, nameof(offer));
+            Require.NotNull(oldOffer, nameof(oldOffer));
+            Require.NotNull(newOffer, nameof(newOffer));
 
-            activeAgainOffers.Add(offer);
+            var pair = new OffersPair(newOffer, oldOffer);
+            activeAgainOffers.Add(pair);
         }
 
         public void AddOfferIsGone(Offer offer)
