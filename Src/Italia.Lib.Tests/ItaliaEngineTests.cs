@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoFixture;
+using Dzaba.TestUtils;
 using Italia.Lib.Dal;
 using Italia.Lib.Model;
 using Italia.Lib.Notifications;
@@ -11,42 +14,43 @@ namespace Italia.Lib.Tests
     [TestFixture]
     public class ItaliaEngineTests
     {
-        private Mock<IDataProvider> dataProviderMock;
-        private Mock<IOffersDal> offersDal;
-        private Mock<INotificationsManager> notifications;
+        private IFixture fixture;
 
         [SetUp]
         public void Setup()
         {
-            dataProviderMock = new Mock<IDataProvider>();
-            offersDal = new Mock<IOffersDal>();
-            notifications = new Mock<INotificationsManager>();
+            fixture = TestFixture.Create();
         }
 
         private ItaliaEngine CreateSut()
         {
-            return new ItaliaEngine(new[] {dataProviderMock.Object}, offersDal.Object, notifications.Object);
+            return fixture.Create<ItaliaEngine>();
         }
 
         private void MockPoll(params Offer[] offers)
         {
-            dataProviderMock.Setup(x => x.GetOffersAsync())
+            var provider = fixture.FreezeMock<IDataProvider>();
+            provider.Setup(x => x.GetOffersAsync())
                 .ReturnsAsync(offers);
+            fixture.Inject<IEnumerable<IDataProvider>>(new[] { provider.Object });
         }
 
         [Test]
         public async Task RunAsync_WhenDbIsEmpty_ThenAllOffersAreNew()
         {
-            offersDal.Setup(x => x.GetAllAsync())
+            var dal = fixture.FreezeMock<IOffersDal>();
+            dal.Setup(x => x.GetAllAsync())
                 .ReturnsAsync(new Offer[0]);
 
             MockPoll(TestData.PollSomeOffers().ToArray());
+
+            var notifications = fixture.FreezeMock<INotificationsManager>();
 
             var sut = CreateSut();
 
             await sut.RunAsync();
 
-            offersDal.Verify(x => x.AddAsync(It.IsNotNull<Offer>()), Times.Exactly(3));
+            dal.Verify(x => x.AddAsync(It.IsNotNull<Offer>()), Times.Exactly(3));
         }
     }
 }
