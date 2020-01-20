@@ -1,4 +1,5 @@
-﻿using Italia.Lib.Dal;
+﻿using Dzaba.Utils;
+using Italia.Lib.Dal;
 using Italia.Lib.Notifications;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,10 +9,12 @@ namespace Italia.Lib
     {
         public static void RegisterItalia(this IServiceCollection container)
         {
+            Require.NotNull(container, nameof(container));
+
             container.AddTransient<IItaliaEngine, ItaliaEngine>();
             container.AddTransient<IOffersDal, OffersDal>();
             container.AddTransient<ISettings, Settings>();
-            container.AddTransient<IDataProviderComposite, DataProviderComposite>();
+            container.AddTransient<INotificationsManager, NotificationsManager>();
         }
     }
 }

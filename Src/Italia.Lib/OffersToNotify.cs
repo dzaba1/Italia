@@ -2,7 +2,7 @@
 using Dzaba.Utils;
 using Italia.Lib.Model;
 
-namespace Italia.Lib.Notifications
+namespace Italia.Lib
 {
     public sealed class OffersPair
     {
