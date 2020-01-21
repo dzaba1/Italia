@@ -38,12 +38,13 @@ namespace Italia.Lib.Notifications.Email
                 using (var msg = new MailMessage())
                 {
                     msg.Subject = settings.EmailSubject;
-                    msg.IsBodyHtml = true;
                     msg.From = new MailAddress(settings.EmailFrom, settings.EmailFromDisplay);
 
                     msg.To.AddRange(settings.EmailTo.Select(t => new MailAddress(t)));
 
-                    msg.Body = builder.Generate(offers);
+                    var body = builder.Generate(offers);
+                    msg.Body = body.Body;
+                    msg.IsBodyHtml = body.IsHtml;
 
                     await smtp.SendMailAsync(msg);
                 }

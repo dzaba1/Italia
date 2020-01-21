@@ -16,7 +16,7 @@ namespace Italia.Lib
             container.AddTransient<IOffersDal, OffersDal>();
             container.AddTransient<INotificationsManager, NotificationsManager>();
             container.AddTransient<INotification, EmailNotification>();
-            container.AddTransient<IEmailBodyBuilder, EmailBodyBuilder>();
+            container.AddTransient<IEmailBodyBuilder, TextEmailBodyBuilder>();
         }
     }
 }

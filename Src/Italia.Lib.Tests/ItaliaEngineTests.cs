@@ -55,7 +55,7 @@ namespace Italia.Lib.Tests
 
             notifications.Verify(
                 x => x.NotifyAsync(It.Is<OffersToNotify>(o =>
-                    o.NewOffers.Count() == 3 && !o.ActiveAgainOffers.Any() && !o.ChangedOffers.Any() &&
+                    o.NewOffers.Count == 3 && !o.ActiveAgainOffers.Any() && !o.ChangedOffers.Any() &&
                     !o.GoneOffers.Any())), Times.Once());
         }
 
@@ -106,7 +106,7 @@ namespace Italia.Lib.Tests
             notifications.Verify(
                 x => x.NotifyAsync(It.Is<OffersToNotify>(o =>
                     !o.NewOffers.Any() && !o.ActiveAgainOffers.Any() && !o.ChangedOffers.Any() &&
-                    o.GoneOffers.Count() == 3)), Times.Once());
+                    o.GoneOffers.Count == 3)), Times.Once());
         }
 
         [Test]
@@ -135,7 +135,7 @@ namespace Italia.Lib.Tests
 
             notifications.Verify(
                 x => x.NotifyAsync(It.Is<OffersToNotify>(o =>
-                    !o.NewOffers.Any() && !o.ActiveAgainOffers.Any() && o.ChangedOffers.Count() == 3 &&
+                    !o.NewOffers.Any() && !o.ActiveAgainOffers.Any() && o.ChangedOffers.Count == 3 &&
                     !o.GoneOffers.Any())), Times.Once());
         }
 
@@ -166,7 +166,7 @@ namespace Italia.Lib.Tests
 
             notifications.Verify(
                 x => x.NotifyAsync(It.Is<OffersToNotify>(o =>
-                    !o.NewOffers.Any() && o.ActiveAgainOffers.Count() == 3 && !o.ChangedOffers.Any() &&
+                    !o.NewOffers.Any() && o.ActiveAgainOffers.Count == 3 && !o.ChangedOffers.Any() &&
                     !o.GoneOffers.Any())), Times.Once());
         }
     }

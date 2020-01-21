@@ -27,10 +27,10 @@ namespace Italia.Lib
         private readonly List<Offer> goneOffers = new List<Offer>();
         private readonly List<OffersPair> changedOffers = new List<OffersPair>();
 
-        public IEnumerable<Offer> NewOffers => newOffers;
-        public IEnumerable<OffersPair> ActiveAgainOffers => activeAgainOffers;
-        public IEnumerable<Offer> GoneOffers => goneOffers;
-        public IEnumerable<OffersPair> ChangedOffers => changedOffers;
+        public IReadOnlyList<Offer> NewOffers => newOffers;
+        public IReadOnlyList<OffersPair> ActiveAgainOffers => activeAgainOffers;
+        public IReadOnlyList<Offer> GoneOffers => goneOffers;
+        public IReadOnlyList<OffersPair> ChangedOffers => changedOffers;
 
         public void AddNewOffer(Offer offer)
         {

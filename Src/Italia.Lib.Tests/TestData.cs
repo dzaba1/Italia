@@ -8,52 +8,28 @@ namespace Italia.Lib.Tests
     {
         public static IEnumerable<Offer> PollSomeOffers()
         {
-            yield return new Offer
-            {
-                ExternalReference = "111",
-                Created = DateTime.Now,
-                Active = true,
-                Modified = DateTime.Now,
-                Price = 1000,
-                From = DateTime.Now,
-                To = DateTime.Now.AddDays(7),
-                HotelName = "Hotel1",
-                Country = "Country1",
-                Url = "Url",
-                Departure = "Departure",
-                DataProvider = "DataProvider1"
-            };
+            yield return BuildOffer("111", true, 1000, "Hotel1", "Country1", "Url", "Departure", "DataProvider1");
+            yield return BuildOffer("112", true, 1100, "Hotel2", "Country1", "Url", "Departure", "DataProvider1");
+            yield return BuildOffer("111", true, 1100, "Hotel1", "Country1", "Url", "Departure", "DataProvider2");
+        }
 
-            yield return new Offer
+        public static Offer BuildOffer(string externalReference, bool active, decimal price, string hotelName,
+            string country, string url, string departure, string dataProvider)
+        {
+            return new Offer
             {
-                ExternalReference = "112",
+                ExternalReference = externalReference,
                 Created = DateTime.Now,
-                Active = true,
+                Active = active,
                 Modified = DateTime.Now,
-                Price = 1100,
+                Price = price,
                 From = DateTime.Now,
                 To = DateTime.Now.AddDays(7),
-                HotelName = "Hotel2",
-                Country = "Country1",
-                Url = "Url",
-                Departure = "Departure",
-                DataProvider = "DataProvider1"
-            };
-
-            yield return new Offer
-            {
-                ExternalReference = "111",
-                Created = DateTime.Now,
-                Active = true,
-                Modified = DateTime.Now,
-                Price = 1000,
-                From = DateTime.Now,
-                To = DateTime.Now.AddDays(7),
-                HotelName = "Hotel1",
-                Country = "Country1",
-                Url = "Url",
-                Departure = "Departure",
-                DataProvider = "DataProvider2"
+                HotelName = hotelName,
+                Country = country,
+                Url = url,
+                Departure = departure,
+                DataProvider = dataProvider
             };
         }
     }
