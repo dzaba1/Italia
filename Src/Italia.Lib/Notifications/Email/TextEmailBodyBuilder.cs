@@ -99,6 +99,7 @@ namespace Italia.Lib.Notifications.Email
             builder.AppendLine($"Ostatni raz zmieniona: {offer.Modified}");
             builder.AppendLine($"Od: {offer.From}");
             builder.AppendLine($"Do: {offer.To}");
+            builder.AppendLine($"Ocena: {offer.Rating}");
             builder.AppendLine($"Odlot z: {offer.Departure}");
             builder.AppendLine($"Link: {offer.Url}");
 
