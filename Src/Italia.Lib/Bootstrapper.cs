@@ -2,6 +2,7 @@
 using System.IO;
 using Dzaba.Utils;
 using Italia.Lib.Dal;
+using Italia.Lib.DataProviders.Italia;
 using Italia.Lib.Notifications;
 using Italia.Lib.Notifications.Email;
 using Microsoft.EntityFrameworkCore;
@@ -24,8 +25,10 @@ namespace Italia.Lib
             container.AddTransient<INotification, EmailNotification>();
             container.AddTransient<IEmailBodyBuilder, TextEmailBodyBuilder>();
             container.AddTransient<IDbInitializer, DbInitializer>();
+            container.AddTransient<IDataProvider, ItaliaProvider>();
             container.AddTransient(BuildConfiguration);
             container.AddTransient<IEmailNotificationSettings>(c => GetSettings<EmailNotificationSettings>(c, nameof(EmailNotificationSettings)));
+            container.AddTransient<IItaliaSettings>(c => GetSettings<ItaliaSettings>(c, "Italia"));
 
             container.AddDbContext<DatabaseContext>(o => o.UseSqlite(ConnectionString), ServiceLifetime.Transient,
                 ServiceLifetime.Transient);
