@@ -25,6 +25,7 @@ namespace Italia.Lib.Model
                 x.HotelName == y.HotelName &&
                 x.OriginalPrice == y.OriginalPrice &&
                 x.Price == y.Price &&
+                x.Rating == y.Rating &&
                 x.To == y.To;
         }
 
@@ -43,6 +44,7 @@ namespace Italia.Lib.Model
                 hashCode = hashCode * -1521134295 + EqualityComparer<decimal?>.Default.GetHashCode(obj.OriginalPrice);
                 hashCode = hashCode * -1521134295 + obj.From.GetHashCode();
                 hashCode = hashCode * -1521134295 + obj.To.GetHashCode();
+                hashCode = hashCode * -1521134295 + obj.Rating.GetHashCode();
                 hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(obj.HotelName);
                 hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(obj.Country);
                 hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(obj.Departure);

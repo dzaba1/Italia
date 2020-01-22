@@ -29,6 +29,8 @@ namespace Italia.Lib.Model
 
         public DateTime To { get; set; }
 
+        public double Rating { get; set; }
+
         [MaxLength(64)]
         [Required]
         public string HotelName { get; set; }
