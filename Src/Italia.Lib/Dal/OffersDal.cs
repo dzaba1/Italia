@@ -1,4 +1,5 @@
-﻿using Dzaba.Utils;
+﻿using System;
+using Dzaba.Utils;
 using Italia.Lib.Model;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -14,36 +15,45 @@ namespace Italia.Lib.Dal
 
     internal sealed class OffersDal : IOffersDal
     {
-        private readonly DatabaseContext dbContext;
+        private readonly Func<DatabaseContext> dbContextFactory;
 
-        public OffersDal(DatabaseContext dbContext)
+        public OffersDal(Func<DatabaseContext> dbContextFactory)
         {
-            Require.NotNull(dbContext, nameof(dbContext));
+            Require.NotNull(dbContextFactory, nameof(dbContextFactory));
 
-            this.dbContext = dbContext;
+            this.dbContextFactory = dbContextFactory;
         }
 
         public async Task<int> AddAsync(Offer value)
         {
             Require.NotNull(value, nameof(value));
 
-            dbContext.Offers.Add(value);
-            await dbContext.SaveChangesAsync();
-            return value.Id;
+            using (var dbContext = dbContextFactory())
+            {
+                dbContext.Offers.Add(value);
+                await dbContext.SaveChangesAsync();
+                return value.Id;
+            }
         }
 
         public async Task<Offer[]> GetAllAsync()
         {
-            return await dbContext.Offers
-                .ToArrayAsync();
+            using (var dbContext = dbContextFactory())
+            {
+                return await dbContext.Offers
+                    .ToArrayAsync();
+            }
         }
 
         public async Task UpdateAsync(Offer value)
         {
             Require.NotNull(value, nameof(value));
 
-            dbContext.Offers.Update(value);
-            await dbContext.SaveChangesAsync();
+            using (var dbContext = dbContextFactory())
+            {
+                dbContext.Offers.Update(value);
+                await dbContext.SaveChangesAsync();
+            }
         }
     }
 }

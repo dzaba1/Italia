@@ -4,6 +4,7 @@ using Dzaba.Utils;
 using Italia.Lib.Dal;
 using Italia.Lib.Notifications;
 using Italia.Lib.Notifications.Email;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,8 @@ namespace Italia.Lib
 {
     public static class Bootstrapper
     {
+        private static readonly string ConnectionString = $"Data Source={Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data.db")}";
+
         public static void RegisterItalia(this IServiceCollection container)
         {
             Require.NotNull(container, nameof(container));
@@ -20,8 +23,13 @@ namespace Italia.Lib
             container.AddTransient<INotificationsManager, NotificationsManager>();
             container.AddTransient<INotification, EmailNotification>();
             container.AddTransient<IEmailBodyBuilder, TextEmailBodyBuilder>();
+            container.AddTransient<IDbInitializer, DbInitializer>();
             container.AddTransient(BuildConfiguration);
             container.AddTransient<IEmailNotificationSettings>(c => GetSettings<EmailNotificationSettings>(c, nameof(EmailNotificationSettings)));
+
+            container.AddDbContext<DatabaseContext>(o => o.UseSqlite(ConnectionString), ServiceLifetime.Transient,
+                ServiceLifetime.Transient);
+            container.AddTransient<Func<DatabaseContext>>(c => c.GetRequiredService<DatabaseContext>);
         }
 
         private static IConfiguration BuildConfiguration(IServiceProvider container)
