@@ -52,8 +52,14 @@ namespace Italia.Lib.DataProviders.Italia
                 OriginalPrice = GetPrice((int)json["oldPrice"]),
                 Price = GetPrice((int)json["price"]),
                 To = GetDate((string)json["dateTo"]),
-                Url = (string)json["url"]
+                Url = GetUrl((string)json["url"])
             };
+        }
+
+        private string GetUrl(string relative)
+        {
+            var url = new Uri(settings.Url.GetHostWithScheme(), relative);
+            return url.ToString();
         }
 
         private string GetCountry(string value)
