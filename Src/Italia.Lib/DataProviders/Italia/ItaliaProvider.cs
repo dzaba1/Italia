@@ -1,57 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dzaba.Utils;
 using Italia.Lib.Model;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Italia.Lib.DataProviders.Italia
 {
-    internal sealed class ItaliaProvider : IDataProvider, IDisposable
+    internal sealed class ItaliaProvider : IDataProvider
     {
         private static readonly Regex CountryRegex = new Regex(@"<a href=""\S+"">(?<Location>\w+)<\/a>", RegexOptions.IgnoreCase);
         private readonly IItaliaSettings settings;
-        private readonly HttpClient http;
+        private readonly IHttp http;
 
-        public ItaliaProvider(IItaliaSettings settings)
+        public ItaliaProvider(IItaliaSettings settings,
+            IHttp http)
         {
             Require.NotNull(settings, nameof(settings));
+            Require.NotNull(http, nameof(http));
 
             this.settings = settings;
-            http = new HttpClient();
-        }
-
-        public void Dispose()
-        {
-            http?.Dispose();
+            this.http = http;
         }
 
         public async Task<Offer[]> GetOffersAsync()
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, settings.Url))
-            {
-                using (var resp = await http.SendAsync(request))
-                {
-                    resp.EnsureSuccessStatusCode();
+            var resp = await http.GetStringAsync(settings.Url);
+            var json = JObject.Parse(resp);
 
-                    using (var stream = await resp.Content.ReadAsStreamAsync())
-                    {
-                        using (var textReader = new StreamReader(stream))
-                        {
-                            using (var jreader = new JsonTextReader(textReader))
-                            {
-                                var json = JObject.Load(jreader);
-                                return TransformJson(json).ToArray();
-                            }
-                        }
-                    }
-                }
-            }
+            return TransformJson(json).ToArray();
         }
 
         private IEnumerable<Offer> TransformJson(JObject json)

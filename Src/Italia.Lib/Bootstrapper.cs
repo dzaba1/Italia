@@ -26,6 +26,7 @@ namespace Italia.Lib
             container.AddTransient<IEmailBodyBuilder, TextEmailBodyBuilder>();
             container.AddTransient<IDbInitializer, DbInitializer>();
             container.AddTransient<IDataProvider, ItaliaProvider>();
+            container.AddSingleton<IHttp, Http>();
             container.AddTransient(BuildConfiguration);
             container.AddTransient<IEmailNotificationSettings>(c => GetSettings<EmailNotificationSettings>(c, nameof(EmailNotificationSettings)));
             container.AddTransient<IItaliaSettings>(c => GetSettings<ItaliaSettings>(c, "Italia"));
