@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dzaba.Utils;
+using Italia.Lib;
 using Italia.Lib.Dal;
 
 namespace Italia
@@ -13,12 +14,16 @@ namespace Italia
     internal sealed class App : IApp
     {
         private readonly IDbInitializer dbInitializer;
+        private readonly IItaliaEngine italiaEngine;
 
-        public App(IDbInitializer dbInitializer)
+        public App(IDbInitializer dbInitializer,
+            IItaliaEngine italiaEngine)
         {
             Require.NotNull(dbInitializer, nameof(dbInitializer));
+            Require.NotNull(italiaEngine, nameof(italiaEngine));
 
             this.dbInitializer = dbInitializer;
+            this.italiaEngine = italiaEngine;
         }
 
         public void Dispose()
@@ -29,6 +34,7 @@ namespace Italia
         public async Task RunAsync()
         {
             await dbInitializer.InitAsync();
+            await italiaEngine.RunAsync();
         }
     }
 }

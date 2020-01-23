@@ -11,7 +11,7 @@ namespace Italia.Lib.DataProviders.Italia
 {
     internal sealed class ItaliaProvider : IDataProvider
     {
-        private static readonly Regex CountryRegex = new Regex(@"<a href=""\S+"">(?<Location>\w+)<\/a>", RegexOptions.IgnoreCase);
+        private static readonly Regex CountryRegex = new Regex(@"<a href=""\S+"">(?<Location>[\w ]+)<\/a>", RegexOptions.IgnoreCase);
         private readonly IItaliaSettings settings;
         private readonly IHttp http;
 
@@ -58,7 +58,8 @@ namespace Italia.Lib.DataProviders.Italia
 
         private string GetCountry(string value)
         {
-            return CountryRegex.Matches(value)[0].Groups["Location"].Value;
+            var matches = CountryRegex.Matches(value);
+            return matches[0].Groups["Location"].Value;
         }
 
         private decimal GetPrice(int value)
