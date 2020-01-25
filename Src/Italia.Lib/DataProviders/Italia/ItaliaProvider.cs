@@ -27,7 +27,29 @@ namespace Italia.Lib.DataProviders.Italia
 
         public async Task<Offer[]> GetOffersAsync()
         {
-            var resp = await http.GetStringAsync(settings.Url);
+            var page = 1;
+            var offers = new List<Offer>();
+            while (true)
+            {
+                var pageOffers = await GetPageAsync(page);
+                if (pageOffers.Any())
+                {
+                    offers.AddRange(pageOffers);
+                    page++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return offers.ToArray();
+        }
+
+        public async Task<Offer[]> GetPageAsync(int page)
+        {
+            var url = new Uri(settings.Url + $"&page={page}");
+            var resp = await http.GetStringAsync(url);
             var json = JObject.Parse(resp);
 
             return TransformJson(json).ToArray();
