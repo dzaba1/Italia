@@ -39,9 +39,17 @@ namespace Italia.Lib.Model
         [Required]
         public string Country { get; set; }
 
+        [NotMapped]
+        public Uri Url
+        {
+            get => new Uri(UriRaw);
+            set => UriRaw = value.ToString();
+        }
+
         [MaxLength(256)]
         [Required]
-        public string Url { get; set; }
+        [Column("Url")]
+        public string UriRaw { get; set; }
 
         [MaxLength(64)]
         [Required]

@@ -27,7 +27,7 @@ namespace Italia.Lib.Tests
                 To = DateTime.Now.AddDays(7),
                 HotelName = hotelName,
                 Country = country,
-                Url = url,
+                Url = new Uri(url),
                 Departure = departure,
                 DataProvider = dataProvider
             };
