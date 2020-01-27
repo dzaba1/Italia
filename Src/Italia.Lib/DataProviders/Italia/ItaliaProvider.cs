@@ -27,11 +27,29 @@ namespace Italia.Lib.DataProviders.Italia
 
         public async Task<Offer[]> GetOffersAsync()
         {
+            var offers = new HashSet<Offer>(OfferExternalReferenceComparer.Instance);
+
+            var tasks = new List<Task<Offer[]>>(settings.Urls.Length);
+            foreach (var url in settings.Urls)
+            {
+                tasks.Add(GetOffersAsync(url));
+            }
+
+            foreach (var task in tasks)
+            {
+                offers.AddRange(await task);
+            }
+
+            return offers.ToArray();
+        }
+
+        private async Task<Offer[]> GetOffersAsync(Uri url)
+        {
             var page = 1;
             var offers = new List<Offer>();
             while (true)
             {
-                var pageOffers = await GetPageAsync(page);
+                var pageOffers = await GetPageAsync(url, page);
                 if (pageOffers.Any())
                 {
                     offers.AddRange(pageOffers);
@@ -46,21 +64,21 @@ namespace Italia.Lib.DataProviders.Italia
             return offers.ToArray();
         }
 
-        public async Task<Offer[]> GetPageAsync(int page)
+        private async Task<Offer[]> GetPageAsync(Uri url, int page)
         {
-            var url = new Uri(settings.Url + $"&page={page}");
-            var resp = await http.GetStringAsync(url);
+            var urlPaged = new Uri(url + $"&page={page}");
+            var resp = await http.GetStringAsync(urlPaged);
             var json = JObject.Parse(resp);
 
-            return TransformJson(json).ToArray();
+            return TransformJson(json, url).ToArray();
         }
 
-        private IEnumerable<Offer> TransformJson(JObject json)
+        private IEnumerable<Offer> TransformJson(JObject json, Uri url)
         {
-            return json["data"].Select(j => TransformOffer((JObject)j));
+            return json["data"].Select(j => TransformOffer((JObject)j, url));
         }
 
-        private Offer TransformOffer(JObject json)
+        private Offer TransformOffer(JObject json, Uri url)
         {
             return new Offer
             {
@@ -74,7 +92,7 @@ namespace Italia.Lib.DataProviders.Italia
                 OriginalPrice = GetPrice((int)json["oldPrice"]),
                 Price = GetPrice((int)json["price"]),
                 To = GetDate((string)json["dateTo"]),
-                Url = new Uri(settings.Url.GetHostWithScheme(), (string)json["url"])
+                Url = new Uri(url.GetHostWithScheme(), (string)json["url"])
             };
         }
 
